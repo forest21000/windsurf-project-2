@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>三维坦克大战 - 3D Tank Battle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a2e;
+            overflow: hidden;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #game-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+        }
+        
+        #gameCanvas {
+            display: block;
+        }
+        
+        .game-header {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 30px;
+            color: #fff;
+            font-size: 18px;
+            padding: 15px 30px;
+            background: rgba(22, 33, 62, 0.9);
+            border-radius: 10px;
+            border: 2px solid #4ecca3;
+            z-index: 100;
+        }
+        
+        .score, .lives, .level, .bombs {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .label {
+            color: #888;
+        }
+        .value {
+            color: #4ecca3;
+            font-weight: bold;
+            min-width: 40px;
+        }
+        
+        .controls-info {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #888;
+            font-size: 14px;
+            padding: 10px 20px;
+            background: rgba(22, 33, 62, 0.9);
+            border-radius: 8px;
+            z-index: 100;
+        }
+        
+        .controls-info span {
+            color: #4ecca3;
+            font-weight: bold;
+        }
+        
+        .start-screen, .game-over, .victory-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.95);
+            padding: 40px 60px;
+            border-radius: 15px;
+            text-align: center;
+            color: #fff;
+            border: 3px solid #4ecca3;
+            z-index: 200;
+        }
+        
+        .start-screen h2, .game-over h2, .victory-screen h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+        
+        .start-screen h2 {
+            color: #4ecca3;
+        }
+        
+        .game-over h2 {
+            color: #e74c3c;
+        }
+        
+        .victory-screen h2 {
+            color: #4ecca3;
+        }
+        
+        .btn {
+            background: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 8px;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #3dbb94;
+            transform: scale(1.05);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        #loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4ecca3;
+            font-size: 24px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <div class="game-header">
+            <div class="score">
+                <span class="label">得分:</span>
+                <span class="value" id="scoreValue">0</span>
+            </div>
+            <div class="level">
+                <span class="label">关卡:</span>
+                <span class="value" id="levelValue">1</span>
+            </div>
+            <div class="lives">
+                <span class="label">生命:</span>
+                <span class="value" id="livesValue">3</span>
+            </div>
+            <div class="bombs">
+                <span class="label">炸弹:</span>
+                <span class="value" id="bombsValue">10</span>
+            </div>
+            <div class="bombs">
+                <span class="label">敌人:</span>
+                <span class="value" id="enemyValue">20</span>
+            </div>
+        </div>
+        
+        <div class="controls-info">
+            <span>↑↓←→</span> 移动 | <span>空格</span> 射击 | <span>回车</span> 炸弹 | <span>P</span> 暂停
+        </div>
+        
+        <div id="loading">加载 Three.js 中...</div>
+        
+        <div class="start-screen" id="startScreen">
+            <h2>🎮 三维坦克大战</h2>
+            <p>保卫基地，消灭所有敌人！</p>
+            <p style="margin-top: 15px; color: #888;">使用方向键控制坦克，空格射击，回车发射炸弹</p>
+            <button class="btn" onclick="startGame()">开始游戏</button>
+        </div>
+        
+        <div class="game-over hidden" id="gameOverScreen">
+            <h2>游戏结束</h2>
+            <p>最终得分: <span id="finalScore">0</span></p>
+            <button class="btn" onclick="restartGame()">重新开始</button>
+        </div>
+        
+        <div class="victory-screen hidden" id="victoryScreen">
+            <h2>🎉 胜利！</h2>
+            <p>你完成了所有关卡！</p>
+            <p>最终得分: <span id="victoryScore">0</span></p>
+            <button class="btn" onclick="restartGame()">再玩一次</button>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="game3d.js"></script>
+</body>
+</html>

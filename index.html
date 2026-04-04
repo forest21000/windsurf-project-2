@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>经典坦克大战 - Tank Battle</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: auto;
+        }
+        
+        .game-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 800px;
+            color: #fff;
+            font-size: 16px;
+            padding: 12px;
+            background: #16213e;
+            border-radius: 8px;
+        }
+        
+        .score, .lives, .level {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .label {
+            color: #888;
+        }
+        .value {
+            color: #4ecca3;
+            font-weight: bold;
+        }
+        
+        #gameCanvas {
+            border: 4px solid #4ecca3;
+            border-radius: 4px;
+            background: #4a7c28;  /* 草地背景色 */
+            image-rendering: pixelated;
+            max-width: 95vw;
+            max-height: 85vh;
+            width: auto;
+            height: auto;
+        }
+        
+        .controls {
+            color: #888;
+            font-size: 16px;
+            text-align: center;
+            margin-top: 15px;
+        }
+        
+        .controls span {
+            color: #4ecca3;
+        }
+        
+        .game-over, .start-screen, .victory-screen {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0, 0, 0, 0.9);
+            padding: 30px 50px;
+            border-radius: 10px;
+            text-align: center;
+            color: #fff;
+            border: 2px solid #4ecca3;
+        }
+        
+        .game-over h2, .start-screen h2, .victory-screen h2 {
+            color: #e74c3c;
+            margin-bottom: 15px;
+            font-size: 28px;
+        }
+        
+        .victory-screen h2 {
+            color: #4ecca3;
+        }
+        
+        .start-screen h2 {
+            color: #4ecca3;
+        }
+        
+        .btn {
+            background: #4ecca3;
+            color: #1a1a2e;
+            border: none;
+            padding: 12px 30px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            border-radius: 5px;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .btn:hover {
+            background: #3dbb94;
+            transform: scale(1.05);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .enemy-count {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .enemy-icon {
+            width: 12px;
+            height: 12px;
+            background: #e74c3c;
+            border: 1px solid #000;
+        }
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="game-header">
+            <div class="score">
+                <span class="label">得分:</span>
+                <span class="value" id="scoreValue">0</span>
+            </div>
+            <div class="level">
+                <span class="label">关卡:</span>
+                <span class="value" id="levelValue">1</span>
+            </div>
+            <div class="lives">
+                <span class="label">生命:</span>
+                <span class="value" id="livesValue">3</span>
+            </div>
+            <div class="enemy-count">
+                <span class="label">剩余敌人:</span>
+                <span class="value" id="enemyValue">20</span>
+            </div>
+        </div>
+        <canvas id="gameCanvas" width="800" height="800"></canvas>
+        <div class="controls">
+            <span>↑↓←→</span> 移动坦克 | <span>空格键</span> 发射炮弹 | <span>回车键</span> 发射炸弹 | <span></span>P</span> 暂停
+        </div>
+    </div>
+    
+    <div class="start-screen" id="startScreen">
+        <h2>🎮 坦克大战</h2>
+        <p>保卫基地，消灭所有敌人！</p>
+        <p style="margin-top: 10px; font-size: 12px; color: #888;">摧毁砖墙 | 钢铁墙不可破坏</p>
+        <button class="btn" onclick="startGame()">开始游戏</button>
+    </div>
+    
+    <div class="game-over hidden" id="gameOverScreen">
+        <h2>游戏结束</h2>
+        <p>最终得分: <span id="finalScore">0</span></p>
+        <button class="btn" onclick="restartGame()">重新开始</button>
+    </div>
+    
+    <div class="victory-screen hidden" id="victoryScreen">
+        <h2>🎉 胜利！</h2>
+        <p>你完成了所有关卡！</p>
+        <p>最终得分: <span id="victoryScore">0</span></p>
+        <button class="btn" onclick="restartGame()">再玩一次</button>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html>
